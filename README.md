@@ -10,9 +10,9 @@ Small utility class to generate an Avro schema from a JSON document based on Jac
 
 ```xml
 <dependency>
-	<groupId>com.github.mredjem</groupId>
-	<artifactId>json-to-avro-schema</artifactId>
-	<version>0.0.1</version>
+  <groupId>com.github.mredjem</groupId>
+  <artifactId>json-to-avro-schema</artifactId>
+  <version>0.0.1</version>
 </dependency>
 ```
 
