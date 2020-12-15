@@ -1,0 +1,29 @@
+{
+  "firstName": "John",
+  "lastName": "DOE",
+  "alive": false,
+  "deathTimestamp": 1578614400000,
+  "age": 30,
+  "money": 100.50,
+  "address": {
+    "street": "Some street in Paris",
+    "town": "PARIS",
+    "postalCode": 75000
+  },
+  "aliases": [
+    {
+      "alias": "Jane DOE",
+      "tags": {
+        "hairColor": "blonde",
+        "size": "medium"
+      }
+    },
+    {
+      "alias": "Nomen nescio",
+      "tags": {
+        "hairColor": "black",
+        "size": "tall"
+      }
+    }
+  ]
+}

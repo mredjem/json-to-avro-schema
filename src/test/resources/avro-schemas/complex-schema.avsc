@@ -1,0 +1,78 @@
+{
+  "type" : "record",
+  "name" : "Test",
+  "namespace" : "com.github.mrm",
+  "fields" : [ {
+    "name" : "firstName",
+    "type" : [ "null", "string" ],
+    "default" : null
+  }, {
+    "name" : "lastName",
+    "type" : [ "null", "string" ],
+    "default" : null
+  }, {
+    "name" : "alive",
+    "type" : [ "null", "boolean" ],
+    "default" : null
+  }, {
+    "name" : "deathTimestamp",
+    "type" : [ "null", "long" ],
+    "default" : null
+  }, {
+    "name" : "age",
+    "type" : [ "null", "int" ],
+    "default" : null
+  }, {
+    "name" : "money",
+    "type" : [ "null", "double" ],
+    "default" : null
+  }, {
+    "name" : "address",
+    "type" : {
+      "type" : "record",
+      "name" : "address",
+      "fields" : [ {
+        "name" : "street",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "town",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "postalCode",
+        "type" : [ "null", "int" ],
+        "default" : null
+      } ]
+    }
+  }, {
+    "name" : "aliases",
+    "type" : {
+      "type" : "array",
+      "items" : {
+        "type" : "record",
+        "name" : "aliases",
+        "fields" : [ {
+          "name" : "alias",
+          "type" : [ "null", "string" ],
+          "default" : null
+        }, {
+          "name" : "tags",
+          "type" : {
+            "type" : "record",
+            "name" : "tags",
+            "fields" : [ {
+              "name" : "hairColor",
+              "type" : [ "null", "string" ],
+              "default" : null
+            }, {
+              "name" : "size",
+              "type" : [ "null", "string" ],
+              "default" : null
+            } ]
+          }
+        } ]
+      }
+    }
+  } ]
+}
