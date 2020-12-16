@@ -6,7 +6,7 @@
 
   <groupId>com.github.mredjem</groupId>
   <artifactId>json-to-avro-schema</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>jar</packaging>
   <name>json-to-avro-schema</name>
   <description>Infer an Avro schema from a JSON document.</description>
