@@ -1,6 +1,5 @@
 package com.github.mrm.avro;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.avro.Schema;
@@ -55,20 +54,11 @@ public class JsonToAvroTest {
 
   @Test
   public void inferSchemaWithDoc() throws Exception {
-    Schema schema = new JsonToAvro("com.github.mrm", new TestVisitor())
+    Schema schema = new JsonToAvro("com.github.mrm", (name, isType) -> isType ? "Doc for type " + name : "Doc for field " + name)
       .inferSchema("Test", testJson);
 
     Assertions.assertNotNull(schema);
     Assertions.assertEquals(testSchemaWithDoc, schema.toString(true));
-  }
-
-  private static class TestVisitor implements JsonToAvro.Visitor {
-
-    @Override
-    public String doc(String name, boolean isType) {
-      return isType ? "Doc for type " + name : "Doc for field " + name;
-    }
-
   }
 
 }

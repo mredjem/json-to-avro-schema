@@ -17,17 +17,17 @@ import java.util.Map;
 public class JsonToAvro {
 
   private final String namespace;
-  private final Visitor visitor;
+  private final DocVisitor docVisitor;
 
   /**
    * Constructor for {@link JsonToAvro}.
    *
    * @param namespace the Avro schema namespace
-   * @param visitor the {@link Visitor} implementation
+   * @param docVisitor the {@link DocVisitor} implementation
    */
-  public JsonToAvro(String namespace, Visitor visitor) {
+  public JsonToAvro(String namespace, DocVisitor docVisitor) {
     this.namespace = namespace;
-    this.visitor = visitor;
+    this.docVisitor = docVisitor;
   }
 
   /**
@@ -49,10 +49,7 @@ public class JsonToAvro {
   public Schema inferSchema(String name, JsonNode node) {
     SchemaBuilder.RecordBuilder<Schema> builder = SchemaBuilder.record(name);
 
-    // set doc for Avro type
-    if (visitor != null) {
-      builder = builder.doc(visitor.doc(name, true));
-    }
+    if (docVisitor != null) builder = builder.doc(docVisitor.doc(name, true));
 
     SchemaBuilder.FieldAssembler<Schema> assembler = builder
       .namespace(namespace)
@@ -84,13 +81,9 @@ public class JsonToAvro {
           .record(entry.getKey())
           .namespace(namespace);
 
-        // set doc for Avro type
-        if (visitor != null) {
-          nestedType = nestedType.doc(visitor.doc(entry.getKey(), true));
-        }
+        if (docVisitor != null) nestedType = nestedType.doc(docVisitor.doc(entry.getKey(), true));
 
         SchemaBuilder.FieldAssembler<Schema> objectAssembler = nestedType.fields();
-
         Schema nestedSchema = setSchemaFields(objectAssembler, entry.getValue()).endRecord();
 
         assembler = assembler.name(entry.getKey()).type(nestedSchema).noDefault();
@@ -102,15 +95,11 @@ public class JsonToAvro {
           .record(entry.getKey())
           .namespace(namespace);
 
-        // set doc for Avro type
-        if (visitor != null) {
-          itemType = itemType.doc(visitor.doc(entry.getKey(), true));
-        }
+        if (docVisitor != null) itemType = itemType.doc(docVisitor.doc(entry.getKey(), true));
 
         SchemaBuilder.FieldAssembler<Schema> itemAssembler = itemType.fields();
 
         JsonNode itemNode = entry.getValue().elements().next();
-
         itemAssembler = setSchemaFields(itemAssembler, itemNode);
 
         assembler = assembler.name(entry.getKey()).type(itemAssembler.endRecord()).noDefault();
@@ -131,7 +120,8 @@ public class JsonToAvro {
       JsonNodeType.STRING,
       JsonNodeType.BOOLEAN,
       JsonNodeType.NUMBER,
-      JsonNodeType.BINARY
+      JsonNodeType.BINARY,
+      JsonNodeType.NULL
     ).contains(type);
   }
 
@@ -147,40 +137,37 @@ public class JsonToAvro {
 
     SchemaBuilder.FieldBuilder<Schema> fieldBuilder = assembler.name(entry.getKey());
 
-    // set doc for Avro field
-    if (visitor != null) {
-      fieldBuilder = fieldBuilder.doc(visitor.doc(entry.getKey(), false));
-    }
+    if (docVisitor != null) fieldBuilder = fieldBuilder.doc(docVisitor.doc(entry.getKey(), false));
 
     // primitive types
-    if (nodeType == JsonNodeType.STRING) {
-      assembler = fieldBuilder.type().optional().stringType();
-    }
-    else if (nodeType == JsonNodeType.BOOLEAN) {
-      assembler = fieldBuilder.type().optional().booleanType();
-    }
-    else if (nodeType == JsonNodeType.NUMBER) {
-      if (entry.getValue().isDouble()) {
-        assembler = fieldBuilder.type().optional().doubleType();
-      }
-      else if (entry.getValue().isFloat()) {
-        assembler = fieldBuilder.type().optional().floatType();
-      }
-      else if (entry.getValue().isShort() || entry.getValue().isInt()) {
-        assembler = fieldBuilder.type().optional().intType();
-      }
-      else if (entry.getValue().isLong()) {
-        assembler = fieldBuilder.type().optional().longType();
-      }
-      else {
-        assembler = fieldBuilder.type().optional().doubleType();
-      }
-    }
-    else if (nodeType == JsonNodeType.BINARY) {
-      assembler = fieldBuilder.type().optional().bytesType();
-    }
-    else {
-      assembler = fieldBuilder.type().optional().stringType();
+    switch (nodeType) {
+      case BOOLEAN:
+        assembler = fieldBuilder.type().optional().booleanType();
+        break;
+
+      case NUMBER:
+        if (entry.getValue().isDouble()) {
+          assembler = fieldBuilder.type().optional().doubleType();
+        }
+        else if (entry.getValue().isFloat()) {
+          assembler = fieldBuilder.type().optional().floatType();
+        }
+        else if (entry.getValue().isShort() || entry.getValue().isInt()) {
+          assembler = fieldBuilder.type().optional().intType();
+        }
+        else if (entry.getValue().isLong()) {
+          assembler = fieldBuilder.type().optional().longType();
+        }
+        break;
+
+      case BINARY:
+        assembler = fieldBuilder.type().optional().bytesType();
+        break;
+
+      case STRING:
+      case NULL:
+      default:
+        assembler = fieldBuilder.type().optional().stringType();
     }
 
     return assembler;
@@ -189,7 +176,8 @@ public class JsonToAvro {
   /**
    * Visitor interface to update the Avro doc fields.
    */
-  public interface Visitor {
+  @FunctionalInterface
+  public interface DocVisitor {
 
     /**
      * Set the Avro doc field for the current encountered field or type.

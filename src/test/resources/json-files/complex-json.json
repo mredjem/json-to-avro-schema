@@ -6,7 +6,7 @@
   "age": 30,
   "money": 100.50,
   "address": {
-    "street": "Some street in Paris",
+    "street": null,
     "town": "PARIS",
     "postalCode": 75000
   },
