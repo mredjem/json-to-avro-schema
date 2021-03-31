@@ -1,0 +1,10 @@
+{
+  "firstName": "John",
+  "lastName": "DOE",
+  "alive": false,
+  "deathTimestamp": 1578614400000,
+  "age": 30,
+  "money": 100.50,
+  "address": {},
+  "aliases": []
+}

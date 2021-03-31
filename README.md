@@ -12,7 +12,7 @@ Small utility class to generate an Avro schema from a JSON document based on Jac
 <dependency>
   <groupId>com.github.mredjem</groupId>
   <artifactId>json-to-avro-schema</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
 </dependency>
 ```
 
@@ -21,7 +21,7 @@ Small utility class to generate an Avro schema from a JSON document based on Jac
 ```java
 JsonNode jsonNode = objectMapper.readTree(jsonContent);
 
-Schema schema = new JsonToAvro("com.github.mrm")
+Schema schema = new JsonToAvroSchema("com.github.mrm")
   .inferSchema("Test", jsonNode);
 
 System.out.println(schema.toString(true));

@@ -14,28 +14,28 @@ import java.util.Map;
  *
  * @author mredjem
  */
-public class JsonToAvro {
+public class JsonToAvroSchema {
 
   private final String namespace;
   private final DocVisitor docVisitor;
 
   /**
-   * Constructor for {@link JsonToAvro}.
+   * Constructor for {@link JsonToAvroSchema}.
    *
    * @param namespace the Avro schema namespace
    * @param docVisitor the {@link DocVisitor} implementation
    */
-  public JsonToAvro(String namespace, DocVisitor docVisitor) {
+  public JsonToAvroSchema(String namespace, DocVisitor docVisitor) {
     this.namespace = namespace;
     this.docVisitor = docVisitor;
   }
 
   /**
-   * Constructor for {@link JsonToAvro}.
+   * Constructor for {@link JsonToAvroSchema}.
    *
    * @param namespace the Avro schema namespace
    */
-  public JsonToAvro(String namespace) {
+  public JsonToAvroSchema(String namespace) {
     this(namespace, null);
   }
 
@@ -99,8 +99,10 @@ public class JsonToAvro {
 
         SchemaBuilder.FieldAssembler<Schema> itemAssembler = itemType.fields();
 
-        JsonNode itemNode = entry.getValue().elements().next();
-        itemAssembler = setSchemaFields(itemAssembler, itemNode);
+        if (!entry.getValue().isEmpty()) {
+          JsonNode itemNode = entry.getValue().elements().next();
+          itemAssembler = setSchemaFields(itemAssembler, itemNode);
+        }
 
         assembler = assembler.name(entry.getKey()).type(itemAssembler.endRecord()).noDefault();
       }
